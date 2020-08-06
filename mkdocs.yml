@@ -1,0 +1,36 @@
+site_name: Covid-19 Data Analytics with Kubernetes
+site_description: >-
+  This is a series of 7 x hands-on workshops, teaching you how to retrieve covid-19 data from an authentic source, make them securely available through REST APIS on kubernetes and Openshift.
+site_url: https://mohaghighi.github.io/Covid19-Web-Application/
+site_author: Mo Haghighi
+repo_name: mohaghighi/Covid19-Web-Application
+repo_url: https://github.com/mohaghighi/Covid19-Web-Application
+theme:
+    name: material
+use_directory_urls: false
+plugins:
+  - search
+#  - with-pdf:
+#      cover_subtitle: Microservices Application with Kubernetes and OpenShift
+#      output_path: pdf/covid19-Applicationx.pdf
+markdown_extensions:
+  - attr_list
+  - admonition
+  - toc:
+      permalink: true
+      toc_depth: 3
+  - pymdownx.superfences
+  - pymdownx.highlight
+extra_css:
+    - css/extra.css
+    - css/pdf-print.css
+nav:
+  - Home: index.md
+  - Architecture: part1.md
+  - Microservices: part2.md
+  - Kubernetes: part3.md
+  - OpenShift on IBM Cloud: part4.md
+  - CodeReady Workspaces: part5.md
+  - CodeReady Containers: part6.md
+  - CI/CD with Jenkins and Tekton: part7.md
+google_analytics: ['UA-172132667-1', 'mohaghighi.github.io/Covid19-Web-Application']
