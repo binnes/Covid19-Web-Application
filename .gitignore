@@ -32,3 +32,6 @@ build/
 
 ### MkDocs ###
 site
+
+### MacOS ###
+.DS_Store
