@@ -15,10 +15,10 @@ The primary applications are developed in Java Spring Boot, but we will add more
 
 ## Watch the full series on YouTube!
 
-| [![Watch Part 1 on YouTube!](images/Labs/Part1-youtube.png)](https://youtu.be/j1jLtp4_6Kg){style="width: 20%"}   | [![Watch Part 2 on YouTube!](images/Labs/Part2-youtube.png)](https://youtu.be/RMe2S30Cggc){style="width: 20%"}         |
+| [![Watch Part 1 on YouTube!](images/Labs/Part1-youtube.png){style="width: 90%"}](https://youtu.be/j1jLtp4_6Kg) | [![Watch Part 2 on YouTube!](images/Labs/Part2-youtube.png){style="width: 90%"}](https://youtu.be/RMe2S30Cggc) |
 | :-------------: |:-------------:|
 | `40 Minutes` | `50 Minutes` |
-| [![Watch Part 3 on YouTube!](images/Labs/Part3-youtube.png)](https://youtu.be/zU7ReT8tZfo){style="width: 20%"}     | [![Watch Part 4 on YouTube!](images/Labs/Part4-youtube.png)](https://youtu.be/zU7ReT8tZfo){style="width: 20%"}    |
+| [![Watch Part 3 on YouTube!](images/Labs/Part3-youtube.png){style="width: 90%"}](https://youtu.be/zU7ReT8tZfo) | [![Watch Part 4 on YouTube!](images/Labs/Part4-youtube.png){style="width: 90%"}](https://youtu.be/zU7ReT8tZfo) |
 | `80 Minutes` | `125 Minutes` |
 
 We highly recommend that you follow the workshops by watching the videos as they are hands-on and much more comprehensive than the instructions given here. All videos are available from the links above or directly from this YouTube [playlist](https://www.youtube.com/playlist?list=PLKBDkjUynCxj2DpjEAWfCsW88M473SWrg)
