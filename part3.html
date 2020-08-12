@@ -1,0 +1,1136 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="This is a series of 7 x hands-on workshops, teaching you how to retrieve covid-19 data from an authentic source, make them securely available through REST APIS on kubernetes and Openshift." name="description"/>
+<link href="https://binnes.github.io/Covid19-Web-Application/part3.html" rel="canonical"/>
+<meta content="Mo Haghighi" name="author"/>
+<link href="assets/images/favicon.png" rel="shortcut icon"/>
+<meta content="mkdocs-1.1.2, mkdocs-material-5.5.5" name="generator"/>
+<title>Kubernetes - Covid-19 Data Analytics with Kubernetes</title>
+<link href="assets/stylesheets/main.63b94e9e.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&amp;display=fallback" rel="stylesheet"/>
+<style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+<link href="css/extra.css" rel="stylesheet"/>
+<link href="css/pdf-print.css" rel="stylesheet"/>
+<script>window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","UA-172132667-1","binnes.github.io/Covid19-Web-Application"),ga("set","anonymizeIp",!0),ga("send","pageview"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){if(this.value){var e=document.location.pathname;ga("send","pageview",e+"?q="+this.value)}})}),document.addEventListener("DOMContentSwitch",function(){ga("send","pageview",document.location.pathname)})</script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
+</head>
+<body dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#part-3-deploy-run-and-maange-your-docker-containers-with-kubernetes">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header-nav md-grid">
+<a aria-label="Covid-19 Data Analytics with Kubernetes" class="md-header-nav__button md-logo" href="https://binnes.github.io/Covid19-Web-Application/" title="Covid-19 Data Analytics with Kubernetes">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"></path></svg>
+</a>
+<label class="md-header-nav__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"></path></svg>
+</label>
+<div class="md-header-nav__title" data-md-component="header-title">
+<div class="md-header-nav__ellipsis">
+<span class="md-header-nav__topic md-ellipsis">
+            Covid-19 Data Analytics with Kubernetes
+          </span>
+<span class="md-header-nav__topic md-ellipsis">
+            
+              Kubernetes
+            
+          </span>
+</div>
+</div>
+<label class="md-header-nav__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" data-md-state="active" name="query" placeholder="Search" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</label>
+<button aria-label="Clear" class="md-search__icon md-icon" data-md-component="search-reset" tabindex="-1" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"></path></svg>
+</button>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header-nav__source">
+<a class="md-source" href="https://github.com/binnes/Covid19-Web-Application/" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    binnes/Covid19-Web-Application
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Covid-19 Data Analytics with Kubernetes" class="md-nav__button md-logo" href="https://binnes.github.io/Covid19-Web-Application/" title="Covid-19 Data Analytics with Kubernetes">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"></path></svg>
+</a>
+    Covid-19 Data Analytics with Kubernetes
+  </label>
+<div class="md-nav__source">
+<a class="md-source" href="https://github.com/binnes/Covid19-Web-Application/" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    binnes/Covid19-Web-Application
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="index.html" title="Home">
+      Home
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="part1.html" title="Architecture">
+      Architecture
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="part2.html" title="Microservices">
+      Microservices
+    </a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+        Kubernetes
+        <span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"></path></svg>
+</span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="part3.html" title="Kubernetes">
+      Kubernetes
+    </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#agenda">
+    Agenda
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kubernetes">
+    Kubernetes
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#quick-reminder-about-microservices-architecture">
+    Quick reminder about Microservices architecture
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#microservices-and-kubernetes">
+    Microservices and Kubernetes
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#moving-from-docker-to-kubernetes">
+    Moving from Docker to Kubernetes
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#understanding-deployment-scenario-in-kubernetes">
+    Understanding Deployment Scenario in Kubernetes
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kubernetes-conceptsresources">
+    Kubernetes Concepts/Resources:
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#deployment-under-the-hood">
+    Deployment under the hood
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kubernetes-features">
+    Kubernetes Features:
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#prerequisites">
+    Prerequisites:
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#what-is-minikube">
+    What is minikube?
+  </a>
+<nav aria-label="What is minikube?" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#spin-up-a-kubernetes-cluster">
+    Spin up a Kubernetes cluster
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#start-minikube-by-limiting-the-resources-utilization">
+    Start minikube by limiting the resources' utilization
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get-cluster-information">
+    Get cluster information
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get-cluster-configuration">
+    Get cluster configuration
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#useful-commands-through-this-section">
+    Useful commands through this section:
+  </a>
+<nav aria-label="Useful commands through this section:" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get-the-list-of-pods">
+    Get the list of Pods
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get-the-list-of-deployments">
+    Get the list of Deployments
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pause-minikube">
+    Pause minikube
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stop-minikube">
+    Stop minikube
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#starting-kubernetes-dashbaord">
+    Starting Kubernetes dashbaord
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#set-minikube-docker-daemon">
+    set minikube docker daemon
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#verify-youre-using-minikubes-docker-by-looking-up-the-images">
+    Verify you're using minikube's docker by looking up the images
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#useful-commands-for-docker">
+    Useful Commands for Docker
+  </a>
+<nav aria-label="Useful Commands for Docker" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#getting-the-list-of-containers">
+    Getting the list of containers
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#getting-running-docker-containers">
+    Getting running docker containers
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#deploying-an-application">
+    Deploying an Application
+  </a>
+<nav aria-label="Deploying an Application" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#creating-deployment-with-an-image">
+    Creating deployment with an image
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#getting-details-on-deployment">
+    Getting details on deployment
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#getting-logs-for-deployment">
+    Getting logs for deployment
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#scaling-applications">
+    Scaling Applications
+  </a>
+<nav aria-label="Scaling Applications" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#creating-instances-of-the-application-by-setting-the-replicas">
+    creating instances of the application by setting the replicas
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#creating-replicas-and-the-processes-under-the-hood">
+    Creating replicas and the processes under the hood
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#scale-deployment-and-setting-replicas">
+    Scale deployment and setting replicas
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#enabling-application-to-automatically-scale">
+    Enabling application to automatically scale
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#getting-info-on-horizontal-pod-autoscaler">
+    Getting Info on Horizontal Pod Autoscaler
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exposing-an-application">
+    Exposing an application
+  </a>
+<nav aria-label="Exposing an application" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#getting-list-of-services">
+    Getting list of services
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pinging-the-application">
+    Pinging the application
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#ssh-into-kubernetes-cluster-to-ping-the-pod-from-within-the-cluster">
+    ssh into kubernetes cluster to ping the pod from within the cluster
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#ping-the-container">
+    Ping the container
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#different-types-of-services-for-exposing-applications">
+    Different types of Services for exposing applications
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#different-types-of-ports-for-accessing-application-from-within-the-cluster-from-outside-the-node-and-form-outside-the-cluster">
+    Different types of ports for accessing application from within the cluster, from outside the node and form outside the cluster
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exposing-application-with-type-loadbalancer">
+    Exposing application with type LoadBalancer
+  </a>
+<nav aria-label="Exposing application with type LoadBalancer" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#getting-the-cluster-ip-for-the-kubernetes-cluster">
+    Getting the Cluster-IP for the Kubernetes Cluster
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#this-command-doesnt-work-as-minikube-doesnt-allocate-the-external-ip-address">
+    This command doesn't work as Minikube doesn't allocate the external IP address
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pinging-the-container-using-minikube-cluster-ip-instead-worker-node-ip-and-nodeport">
+    Pinging the container using minikube cluster IP instead worker node IP and NodePort
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#now-lets-try-to-access-the-pod-from-within-the-cluster">
+    Now let's try to access the pod from within the cluster
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#using-the-load-balancer-ip-and-container-port">
+    Using the Load Balancer IP and container Port
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#rolling-out-updates">
+    Rolling out updates
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#what-is-yaml">
+    What is YAML?
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#using-yaml-to-create-resources">
+    Using YAML to create resources
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#once-yaml-file-is-crafted-here-is-how-to-apply-it">
+    Once YAML file is crafted, here is how to apply it:
+  </a>
+<nav aria-label="Once YAML file is crafted, here is how to apply it:" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get-logs-of-applying-yaml-file">
+    Get logs of applying YAML file
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#summary">
+    Summary
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="part4.html" title="OpenShift on IBM Cloud">
+      OpenShift on IBM Cloud
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="part5.html" title="CodeReady Workspaces">
+      CodeReady Workspaces
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="part6.html" title="CodeReady Containers">
+      CodeReady Containers
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="part7.html" title="CI/CD with Jenkins and Tekton">
+      CI/CD with Jenkins and Tekton
+    </a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#agenda">
+    Agenda
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kubernetes">
+    Kubernetes
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#quick-reminder-about-microservices-architecture">
+    Quick reminder about Microservices architecture
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#microservices-and-kubernetes">
+    Microservices and Kubernetes
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#moving-from-docker-to-kubernetes">
+    Moving from Docker to Kubernetes
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#understanding-deployment-scenario-in-kubernetes">
+    Understanding Deployment Scenario in Kubernetes
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kubernetes-conceptsresources">
+    Kubernetes Concepts/Resources:
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#deployment-under-the-hood">
+    Deployment under the hood
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kubernetes-features">
+    Kubernetes Features:
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#prerequisites">
+    Prerequisites:
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#what-is-minikube">
+    What is minikube?
+  </a>
+<nav aria-label="What is minikube?" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#spin-up-a-kubernetes-cluster">
+    Spin up a Kubernetes cluster
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#start-minikube-by-limiting-the-resources-utilization">
+    Start minikube by limiting the resources' utilization
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get-cluster-information">
+    Get cluster information
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get-cluster-configuration">
+    Get cluster configuration
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#useful-commands-through-this-section">
+    Useful commands through this section:
+  </a>
+<nav aria-label="Useful commands through this section:" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get-the-list-of-pods">
+    Get the list of Pods
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get-the-list-of-deployments">
+    Get the list of Deployments
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pause-minikube">
+    Pause minikube
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stop-minikube">
+    Stop minikube
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#starting-kubernetes-dashbaord">
+    Starting Kubernetes dashbaord
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#set-minikube-docker-daemon">
+    set minikube docker daemon
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#verify-youre-using-minikubes-docker-by-looking-up-the-images">
+    Verify you're using minikube's docker by looking up the images
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#useful-commands-for-docker">
+    Useful Commands for Docker
+  </a>
+<nav aria-label="Useful Commands for Docker" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#getting-the-list-of-containers">
+    Getting the list of containers
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#getting-running-docker-containers">
+    Getting running docker containers
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#deploying-an-application">
+    Deploying an Application
+  </a>
+<nav aria-label="Deploying an Application" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#creating-deployment-with-an-image">
+    Creating deployment with an image
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#getting-details-on-deployment">
+    Getting details on deployment
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#getting-logs-for-deployment">
+    Getting logs for deployment
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#scaling-applications">
+    Scaling Applications
+  </a>
+<nav aria-label="Scaling Applications" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#creating-instances-of-the-application-by-setting-the-replicas">
+    creating instances of the application by setting the replicas
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#creating-replicas-and-the-processes-under-the-hood">
+    Creating replicas and the processes under the hood
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#scale-deployment-and-setting-replicas">
+    Scale deployment and setting replicas
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#enabling-application-to-automatically-scale">
+    Enabling application to automatically scale
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#getting-info-on-horizontal-pod-autoscaler">
+    Getting Info on Horizontal Pod Autoscaler
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exposing-an-application">
+    Exposing an application
+  </a>
+<nav aria-label="Exposing an application" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#getting-list-of-services">
+    Getting list of services
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pinging-the-application">
+    Pinging the application
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#ssh-into-kubernetes-cluster-to-ping-the-pod-from-within-the-cluster">
+    ssh into kubernetes cluster to ping the pod from within the cluster
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#ping-the-container">
+    Ping the container
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#different-types-of-services-for-exposing-applications">
+    Different types of Services for exposing applications
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#different-types-of-ports-for-accessing-application-from-within-the-cluster-from-outside-the-node-and-form-outside-the-cluster">
+    Different types of ports for accessing application from within the cluster, from outside the node and form outside the cluster
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#exposing-application-with-type-loadbalancer">
+    Exposing application with type LoadBalancer
+  </a>
+<nav aria-label="Exposing application with type LoadBalancer" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#getting-the-cluster-ip-for-the-kubernetes-cluster">
+    Getting the Cluster-IP for the Kubernetes Cluster
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#this-command-doesnt-work-as-minikube-doesnt-allocate-the-external-ip-address">
+    This command doesn't work as Minikube doesn't allocate the external IP address
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pinging-the-container-using-minikube-cluster-ip-instead-worker-node-ip-and-nodeport">
+    Pinging the container using minikube cluster IP instead worker node IP and NodePort
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#now-lets-try-to-access-the-pod-from-within-the-cluster">
+    Now let's try to access the pod from within the cluster
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#using-the-load-balancer-ip-and-container-port">
+    Using the Load Balancer IP and container Port
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#rolling-out-updates">
+    Rolling out updates
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#what-is-yaml">
+    What is YAML?
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#using-yaml-to-create-resources">
+    Using YAML to create resources
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#once-yaml-file-is-crafted-here-is-how-to-apply-it">
+    Once YAML file is crafted, here is how to apply it:
+  </a>
+<nav aria-label="Once YAML file is crafted, here is how to apply it:" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#get-logs-of-applying-yaml-file">
+    Get logs of applying YAML file
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#summary">
+    Summary
+  </a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content">
+<article class="md-content__inner md-typeset">
+<a class="md-content__button md-icon" href="https://github.com/binnes/Covid19-Web-Application/edit/master/docs/part3.md" title="Edit this page">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"></path></svg>
+</a>
+<h1 id="part-3-deploy-run-and-maange-your-docker-containers-with-kubernetes">Part 3: Deploy, Run and Maange your Docker Containers with Kubernetes<a class="headerlink" href="#part-3-deploy-run-and-maange-your-docker-containers-with-kubernetes" title="Permanent link">¶</a></h1>
+<p><a href="https://youtu.be/RMe2S30zU7ReT8tZfoCggc"><img alt='"Demonstration of instructor completing this tutorial"' class="center" src="images/Labs/Part3-youtube.png" style="width: 80%"/></a></p>
+<h2 id="agenda">Agenda<a class="headerlink" href="#agenda" title="Permanent link">¶</a></h2>
+<p>In this section you will learn:</p>
+<ul>
+<li>Why Kubernetes</li>
+<li>Kubernetes concepts/components</li>
+<li>Deploy on Kubernetes <ul>
+<li>Minikube</li>
+<li>Pulling image from registry</li>
+<li>Create deployment</li>
+<li>Expose deployment</li>
+<li>Create services</li>
+</ul>
+</li>
+<li>Manage with Kubernetes<ul>
+<li>Replicasets</li>
+<li>Rolling out updates</li>
+<li>Autoscaling</li>
+</ul>
+</li>
+</ul>
+<p><img alt="alt text" class="center" src="images/Labs/Slide60.png" style="width: 80%"/></p>
+<h2 id="kubernetes">Kubernetes<a class="headerlink" href="#kubernetes" title="Permanent link">¶</a></h2>
+<p>Kubernetes is Greek for helmsman or pilot, hence the helm in the Kubernetes logo.</p>
+<p>Imagine a ship full of containers like in this photo, and the helmsman is to make sure the ship sails smoothly through the oceans, and despite all the tides and waves, it makes it to the destination safely. the helmsman orders his crew to evenly distribute the containers around the ship in a way that, proper balance is struck, no one side is abnormally heavier, containers won't fall off, and the ship sails smoothly throughout the journey.</p>
+<p>Just like the helmsman, Kubernetes looks after a large number of containerised applications, by orchestrating them according to the load, and the available underlying resources, making sure our system achieves minimum zero downtime and our applications are always up and running.</p>
+<p>In the first and second labs we learned about the advantages and motivations for moving away from Monolithic applications and adopting microservices architecture.</p>
+<h2 id="quick-reminder-about-microservices-architecture">Quick reminder about Microservices architecture<a class="headerlink" href="#quick-reminder-about-microservices-architecture" title="Permanent link">¶</a></h2>
+<p>Microservices architecture addresses all of the liabilities that are inherent in monolithic applications. 
+microservices architecture allows</p>
+<ol>
+<li>Different parts of our application to evolve on different timelines,</li>
+<li>They can be deployed separately,</li>
+<li>You choose your technology stack for each Microservice as it best fits the purpose,</li>
+<li>You can scale your services dynamically at runtime. Or let's say you can create individual instances of each individual service.</li>
+</ol>
+<p>But the most obvious advantage here is, if any part of the application fails, the whole application will not necessarily become unavailable/unresponsive to the customer, because they are not designed and operated as a single entity like in monolithic architecture.</p>
+<h2 id="microservices-and-kubernetes">Microservices and Kubernetes<a class="headerlink" href="#microservices-and-kubernetes" title="Permanent link">¶</a></h2>
+<p><img alt="alt text" class="center" src="images/Labs/Slide67.png" style="width: 80%"/></p>
+<p>In the previous labs, we broke down our application into several microservices and then containerised them with Docker and let docker run them. So we converted our application into a multi-container application in order to remove that single point of failure. But here 's the problem: Docker is running on a single host.</p>
+<h2 id="moving-from-docker-to-kubernetes">Moving from Docker to Kubernetes<a class="headerlink" href="#moving-from-docker-to-kubernetes" title="Permanent link">¶</a></h2>
+<p><img alt="alt text" class="center" src="images/Labs/Slide69.png" style="width: 80%"/></p>
+<p>And here we discuss why we need a containers orchestration platform like Kubernetes when moving from development to production.</p>
+<p>a multi-container application must run on a multi-host environment in order to eliminate that single point of failure. If one host went down our orchestration tool can switch the load to another host. </p>
+<p>We need to be able to create new instances of our individual microservices containers to scale accordingly.</p>
+<p>When one or more of our services need to be updated, or let's say we are adding a new service to our mix, the orchestration platform must be able to automatically schedule new deployments and create new instances of our containers with zero downtime.</p>
+<p><img alt="alt text" class="center" src="images/Labs/Slide73.png" style="width: 80%"/></p>
+<p>Kubernetes scales and manages our containers according to the available underlying resources on the host. Docker has a good view of what's happening to our containers, but not our host machine.</p>
+<p>Last but not least, Kubernetes checks our container continually to make sure they're healthy, and in case of any failure, it'll take actions to reinstate our deployment, create new instances or restore the services.</p>
+<h2 id="understanding-deployment-scenario-in-kubernetes">Understanding Deployment Scenario in Kubernetes<a class="headerlink" href="#understanding-deployment-scenario-in-kubernetes" title="Permanent link">¶</a></h2>
+<p><img alt="alt text" class="center" src="images/Labs/Slide70.png" style="width: 80%"/></p>
+<p>Now let's take a look at a deployment scenario on a high level, how we are going to deploy our application onto Kubernetes.</p>
+<p>We broke down our application, built docker containers, deploying each docker container will spin up a pod with its docker container in there. Based on our deployment scenario, and the load, each pod gets replicated (and that way we're making new instances of the docker containers) -these pods are inside a worker, which we are showing them for simplicity. so we first created a deployment, and then  scale our deployment accordingly. Next step is to create a service, which allows our applications communicate with each within the cluster and also exposes our application to the internet and external networks. If the service type is a load balancer, Traffic coming to our application will be directed to the pods accordingly through the load-balancer service.  </p>
+<h2 id="kubernetes-conceptsresources">Kubernetes Concepts/Resources:<a class="headerlink" href="#kubernetes-conceptsresources" title="Permanent link">¶</a></h2>
+<p><strong>Pod</strong>:Group of one or more containers with shared storage/network and a specification for how to run the containers in a shared context.</p>
+<p><strong>Deployment</strong>:A set of multiple, identical Pods with no unique identities. It runs multiple replicas of your application, and automatically replaces any failed instances.</p>
+<p><strong>Node</strong>:A virtual or a physical machine with multiple pods, where Master node automatically handles scheduling the pods across the Worker nodes in the cluster.</p>
+<p><strong>Service</strong>:An abstraction which defines a logical set of Pods and a policy by which to access them. Service enables external access to a set of Pods.</p>
+<p><strong>Label</strong>:Labels are key/value pairs that are attached to objects, such as pods.</p>
+<p><strong>Namespace</strong>:Logical isolation/partitioning of resources in kubernetes cluster.</p>
+<p>Now that we know the key components, let's revisit our deployment scenario, this time in more details to see what's happening under the hood.</p>
+<h2 id="deployment-under-the-hood">Deployment under the hood<a class="headerlink" href="#deployment-under-the-hood" title="Permanent link">¶</a></h2>
+<p>Firstly, we'll use KUBECTL CLI tool to interact with Kubernetes cluster. The kubectl lets you control Kubernetes clusters and its resources.</p>
+<p>Think of kubectl as your magic keyword to instruct Kubernetes from your terminal.</p>
+<p><img alt="alt text" class="center" src="images/Labs/Slide72.png" style="width: 80%"/></p>
+<h2 id="kubernetes-features">Kubernetes Features:<a class="headerlink" href="#kubernetes-features" title="Permanent link">¶</a></h2>
+<ul>
+<li>Automated rollouts and rollbacks</li>
+<li>Automatic scaling and load balancing</li>
+<li>Self-healing</li>
+<li>Service discovery</li>
+<li>Storage orchestration</li>
+</ul>
+<p>Automated rolling out changes to a deployment and the ability to pause, resume and rollback to previous version if needed.</p>
+<p>Automatic scaling and load balancing: When traffic to a container spikes, Kubernetes can employ load balancing and scaling to distribute it across the network to maintain stability.</p>
+<p>Self-healing: When a container fails, Kubernetes can restart or replace it automatically; it can also take down containers that don't meet your health-check requirements.</p>
+<p>Service discovery: Kubernetes can automatically expose a container to the internet or to other containers using a DNS name and IP address.<br/>
+And finally, provisioning local or cloud storage for your containers as needed.</p>
+<h2 id="prerequisites">Prerequisites:<a class="headerlink" href="#prerequisites" title="Permanent link">¶</a></h2>
+<p><img alt="alt text" class="center" src="images/Labs/Slide76.png" style="width: 80%"/></p>
+<p>In this part we are going to use minikube to spin up a single-node kubernetes cluster locally.</p>
+<p>Here's the link to minikube on your machine:</p>
+<div class="highlight"><pre><span></span><code>https://kubernetes.io/docs/tasks/tools/install-minikube/
+</code></pre></div>
+<h2 id="what-is-minikube">What is minikube?<a class="headerlink" href="#what-is-minikube" title="Permanent link">¶</a></h2>
+<p><img alt="alt text" class="center" src="images/Labs/Slide77.png" style="width: 80%"/></p>
+<h3 id="spin-up-a-kubernetes-cluster">Spin up a Kubernetes cluster<a class="headerlink" href="#spin-up-a-kubernetes-cluster" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>minikube start
+</code></pre></div>
+<h3 id="start-minikube-by-limiting-the-resources-utilization">Start minikube by limiting the resources' utilization<a class="headerlink" href="#start-minikube-by-limiting-the-resources-utilization" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>minikube start --memory<span class="o">=</span><span class="m">8192</span> --cpus<span class="o">=</span><span class="m">3</span> --kubernetes-version<span class="o">=</span>v1.17.4 --vm-driver<span class="o">=</span>virtualbox
+</code></pre></div>
+<h3 id="get-cluster-information">Get cluster information<a class="headerlink" href="#get-cluster-information" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>kubectl cluster-info  
+</code></pre></div>
+<h3 id="get-cluster-configuration">Get cluster configuration<a class="headerlink" href="#get-cluster-configuration" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>kubectl config view
+</code></pre></div>
+<h2 id="useful-commands-through-this-section">Useful commands through this section:<a class="headerlink" href="#useful-commands-through-this-section" title="Permanent link">¶</a></h2>
+<h3 id="get-the-list-of-pods">Get the list of Pods<a class="headerlink" href="#get-the-list-of-pods" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>kubectl get pods 
+</code></pre></div>
+<h3 id="get-the-list-of-deployments">Get the list of Deployments<a class="headerlink" href="#get-the-list-of-deployments" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>kubectl get deployment  
+</code></pre></div>
+<h3 id="pause-minikube">Pause minikube<a class="headerlink" href="#pause-minikube" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>kubectl pause minikube 
+</code></pre></div>
+<h3 id="stop-minikube">Stop minikube<a class="headerlink" href="#stop-minikube" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>kubectl stop minikube  
+</code></pre></div>
+<h3 id="starting-kubernetes-dashbaord">Starting Kubernetes dashbaord<a class="headerlink" href="#starting-kubernetes-dashbaord" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>kubectl minikube dashboard
+</code></pre></div>
+<h3 id="set-minikube-docker-daemon">set minikube docker daemon<a class="headerlink" href="#set-minikube-docker-daemon" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nb">eval</span> <span class="k">$(</span>minikube docker-env<span class="k">)</span>
+</code></pre></div>
+<p><img alt="alt text" class="center" src="images/Labs/Slide80.png" style="width: 80%"/></p>
+<h3 id="verify-youre-using-minikubes-docker-by-looking-up-the-images">Verify you're using minikube's docker by looking up the images<a class="headerlink" href="#verify-youre-using-minikubes-docker-by-looking-up-the-images" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>docker get images
+</code></pre></div>
+<h2 id="useful-commands-for-docker">Useful Commands for Docker<a class="headerlink" href="#useful-commands-for-docker" title="Permanent link">¶</a></h2>
+<h3 id="getting-the-list-of-containers">Getting the list of containers<a class="headerlink" href="#getting-the-list-of-containers" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>docker container List  
+</code></pre></div>
+<h3 id="getting-running-docker-containers">Getting running docker containers<a class="headerlink" href="#getting-running-docker-containers" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>docker ps  
+</code></pre></div>
+<h2 id="deploying-an-application">Deploying an Application<a class="headerlink" href="#deploying-an-application" title="Permanent link">¶</a></h2>
+<h3 id="creating-deployment-with-an-image">Creating deployment with an image<a class="headerlink" href="#creating-deployment-with-an-image" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>kubectl create deployment <span class="o">[</span>label<span class="o">]</span> --image<span class="o">=</span> <span class="o">[</span>Image Name<span class="o">]</span>
+</code></pre></div>
+<h3 id="getting-details-on-deployment">Getting details on deployment<a class="headerlink" href="#getting-details-on-deployment" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>kubectl describe deployment/<span class="o">[</span>deployment<span class="o">]</span> 
+</code></pre></div>
+<h3 id="getting-logs-for-deployment">Getting logs for deployment<a class="headerlink" href="#getting-logs-for-deployment" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>kubectl get events 
+</code></pre></div>
+<h2 id="scaling-applications">Scaling Applications<a class="headerlink" href="#scaling-applications" title="Permanent link">¶</a></h2>
+<h3 id="creating-instances-of-the-application-by-setting-the-replicas">creating instances of the application by setting the replicas<a class="headerlink" href="#creating-instances-of-the-application-by-setting-the-replicas" title="Permanent link">¶</a></h3>
+<p><img alt="alt text" class="center" src="images/Labs/Slide81.png" style="width: 80%"/></p>
+<h3 id="creating-replicas-and-the-processes-under-the-hood">Creating replicas and the processes under the hood<a class="headerlink" href="#creating-replicas-and-the-processes-under-the-hood" title="Permanent link">¶</a></h3>
+<p><img alt="alt text" class="center" src="images/Labs/Slide82.png" style="width: 80%"/></p>
+<h3 id="scale-deployment-and-setting-replicas">Scale deployment and setting replicas<a class="headerlink" href="#scale-deployment-and-setting-replicas" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>kubectl scale deployment <span class="o">[</span>Deployment Name<span class="o">]</span> --replicas<span class="o">=</span><span class="m">4</span>
+</code></pre></div>
+<h3 id="enabling-application-to-automatically-scale">Enabling application to automatically scale<a class="headerlink" href="#enabling-application-to-automatically-scale" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>kubectl autoscale deployment <span class="o">[</span>deployment<span class="o">]</span> --min<span class="o">=</span><span class="m">1</span> --max<span class="o">=</span><span class="m">8</span> --cpu-percent<span class="o">=</span><span class="m">80</span>  
+</code></pre></div>
+<h3 id="getting-info-on-horizontal-pod-autoscaler">Getting Info on Horizontal Pod Autoscaler<a class="headerlink" href="#getting-info-on-horizontal-pod-autoscaler" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>kubectl get hpa
+</code></pre></div>
+<h2 id="exposing-an-application">Exposing an application<a class="headerlink" href="#exposing-an-application" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code>kubectl expose deployment <span class="o">[</span>deployment Name<span class="o">]</span> <span class="o">[</span>--port<span class="o">=</span><span class="m">8082</span> <span class="o">]</span>  --type<span class="o">=</span>NodePort
+</code></pre></div>
+<h3 id="getting-list-of-services">Getting list of services<a class="headerlink" href="#getting-list-of-services" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>kubectl get services
+</code></pre></div>
+<h3 id="pinging-the-application">Pinging the application<a class="headerlink" href="#pinging-the-application" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>curl <span class="o">[</span>Master IP<span class="o">]</span>:<span class="o">[</span>NodePort<span class="o">]</span>/hello/
+</code></pre></div>
+<p><img alt="alt text" class="center" src="images/Labs/Slide84.png" style="width: 80%"/></p>
+<h3 id="ssh-into-kubernetes-cluster-to-ping-the-pod-from-within-the-cluster">ssh into kubernetes cluster to ping the pod from within the cluster<a class="headerlink" href="#ssh-into-kubernetes-cluster-to-ping-the-pod-from-within-the-cluster" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>minikube ssh  
+</code></pre></div>
+<h3 id="ping-the-container">Ping the container<a class="headerlink" href="#ping-the-container" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>curl <span class="o">[</span>Pod IP<span class="o">]</span>:<span class="o">[</span>container port<span class="o">]</span>/hello/  
+</code></pre></div>
+<h2 id="different-types-of-services-for-exposing-applications">Different types of Services for exposing applications<a class="headerlink" href="#different-types-of-services-for-exposing-applications" title="Permanent link">¶</a></h2>
+<p><strong>ClusterIP</strong>: This default type exposes the service on a cluster-internal IP. You can reach the service only from within the cluster.</p>
+<p><strong>NodePort</strong>: This type of service exposes the service on each node’s IP at a static port. A ClusterIP service is created automatically, and the NodePort service will route to it. From outside the cluster, you can contact the NodePort service by using “&lt;NodeIP&gt;:&lt;NodePort&gt;”.</p>
+<p><strong>LoadBalancer</strong>: This service type exposes the service externally using the load balancer of your cloud provider. The external load balancer routes to your NodePort and ClusterIP services, which are created automatically</p>
+<h2 id="different-types-of-ports-for-accessing-application-from-within-the-cluster-from-outside-the-node-and-form-outside-the-cluster">Different types of ports for accessing application from within the cluster, from outside the node and form outside the cluster<a class="headerlink" href="#different-types-of-ports-for-accessing-application-from-within-the-cluster-from-outside-the-node-and-form-outside-the-cluster" title="Permanent link">¶</a></h2>
+<p><strong>NodePort</strong>: This setting makes the service visible outside the Kubernetes cluster by the node’s IP address and the port number declared in this property. The service also has to be of type NodePort (if this field isn’t specified, Kubernetes will allocate a node port automatically).</p>
+<p><strong>Port</strong>: Expose the service on the specified port internally within the cluster. That is, the service becomes visible on this port, and will send requests made to this port to the pods selected by the service.</p>
+<p><strong>TargetPort</strong>: This is the port on the pod that the request gets sent to. Your application needs to be listening for network requests on this port for the service to work.</p>
+<p><img alt="alt text" class="center" src="images/Labs/Slide86.png" style="width: 80%"/></p>
+<h2 id="exposing-application-with-type-loadbalancer">Exposing application with type LoadBalancer<a class="headerlink" href="#exposing-application-with-type-loadbalancer" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code>kubectl expose deployment <span class="o">[</span>deployment Name<span class="o">]</span> <span class="o">[</span>--port<span class="o">=</span><span class="m">8082</span> <span class="o">]</span> --type<span class="o">=</span>LoadBalancer
+</code></pre></div>
+<h3 id="getting-the-cluster-ip-for-the-kubernetes-cluster">Getting the Cluster-IP for the Kubernetes Cluster<a class="headerlink" href="#getting-the-cluster-ip-for-the-kubernetes-cluster" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>kubectl cluster-info  
+</code></pre></div>
+<h3 id="this-command-doesnt-work-as-minikube-doesnt-allocate-the-external-ip-address">This command doesn't work as Minikube doesn't allocate the external IP address<a class="headerlink" href="#this-command-doesnt-work-as-minikube-doesnt-allocate-the-external-ip-address" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>curl <span class="o">[</span>LoadBalancer External IP<span class="o">]</span>:<span class="o">[</span>Node Port<span class="o">]</span>/hello/
+</code></pre></div>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>minikube is a single node cluster. therefore its IP address is the same node IP</p>
+</div>
+<h3 id="pinging-the-container-using-minikube-cluster-ip-instead-worker-node-ip-and-nodeport">Pinging the container using minikube cluster IP instead worker node IP and NodePort<a class="headerlink" href="#pinging-the-container-using-minikube-cluster-ip-instead-worker-node-ip-and-nodeport" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>curl <span class="o">[</span>kubernetes Cluster-IP<span class="o">]</span>:<span class="o">[</span>Node Port<span class="o">]</span>/hello/
+</code></pre></div>
+<h3 id="now-lets-try-to-access-the-pod-from-within-the-cluster">Now let's try to access the pod from within the cluster<a class="headerlink" href="#now-lets-try-to-access-the-pod-from-within-the-cluster" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>minikube ssh
+</code></pre></div>
+<h3 id="using-the-load-balancer-ip-and-container-port">Using the Load Balancer IP and container Port<a class="headerlink" href="#using-the-load-balancer-ip-and-container-port" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>curl <span class="o">[</span>LoadBalancer Cluster IP<span class="o">(</span>internal<span class="o">)]</span>:<span class="o">[</span>Port<span class="o">]</span>/hello/
+</code></pre></div>
+<h2 id="rolling-out-updates">Rolling out updates<a class="headerlink" href="#rolling-out-updates" title="Permanent link">¶</a></h2>
+<p><img alt="alt text" class="center" src="images/Labs/Slide91.png" style="width: 80%"/></p>
+<p>Rolling updates allow Deployments' update to take place with zero downtime by incrementally updating Pods instances with new ones. Performing updates without affecting application availability.</p>
+<p><img alt="alt text" class="center" src="images/Labs/Slide139.png" style="width: 80%"/></p>
+<p>In this part we're going to update our image to the parser for covid-19 mortality data, which reflects the number of death in every country country and region.</p>
+<div class="highlight"><pre><span></span><code>kubectl <span class="nb">set</span> image deployment/<span class="o">[</span>deployment name<span class="o">]</span>  <span class="o">[</span>container<span class="o">]=[</span>new image<span class="o">]</span>
+</code></pre></div>
+<p>Make sure you use the container name in the above command to update the image in it.</p>
+<p>To get the container name, use:</p>
+<div class="highlight"><pre><span></span><code>kubectl get deployment -o wide
+</code></pre></div>
+<p>verify the deployment is updated by pinging the app</p>
+<div class="highlight"><pre><span></span><code>curl ip:port/hello/
+curl ip:port/get/country/data/germany/
+</code></pre></div>
+<p>To rollback to the previous version use:</p>
+<div class="highlight"><pre><span></span><code>kubectl rollout undo deployment/<span class="o">[</span>deployment Name<span class="o">]</span>
+</code></pre></div>
+<p>optional: You can add --to-revision=n in order to rollback to a specific version</p>
+<div class="highlight"><pre><span></span><code>kubectl rollout undo deployment/<span class="o">[</span>deployment Name<span class="o">]</span> --to-revision<span class="o">=</span><span class="m">2</span>
+</code></pre></div>
+<p>checkout the rollout status</p>
+<div class="highlight"><pre><span></span><code>kubectl rollout status deployment/<span class="o">[</span>deployment Name<span class="o">]</span>
+</code></pre></div>
+<h2 id="what-is-yaml">What is YAML?<a class="headerlink" href="#what-is-yaml" title="Permanent link">¶</a></h2>
+<p>YAML is a human-readable, data serialization standard for specifying configuration-type information.
+YAML can be used for common use cases such as:</p>
+<ul>
+<li>Configuration files</li>
+<li>Inter-process messaging</li>
+<li>Cross-language data sharing</li>
+</ul>
+<p><img alt="alt text" class="center" src="images/Labs/Slide95.png" style="width: 80%"/></p>
+<p>Kubernetes resources are represented as objects and can be expressed in <strong>YAML</strong> or <strong>JSON</strong> format
+Examples:</p>
+<ul>
+<li>
+<p>Print deployment as Yaml</p>
+<div class="highlight"><pre><span></span><code>kubectl get deployment –o yaml <span class="o">[</span>json<span class="o">]</span>
+</code></pre></div>
+</li>
+<li>
+<p>Print services as Yaml</p>
+<div class="highlight"><pre><span></span><code>kubectl get services –o yaml
+</code></pre></div>
+</li>
+</ul>
+<h2 id="using-yaml-to-create-resources">Using YAML to create resources<a class="headerlink" href="#using-yaml-to-create-resources" title="Permanent link">¶</a></h2>
+<p><img alt="alt text" class="center" src="images/Labs/Slide97.png" style="width: 90%"/>
+<img alt="alt text" class="center" src="images/Labs/Slide98.png" style="width: 90%"/>
+<img alt="alt text" class="center" src="images/Labs/Slide99.png" style="width: 90%"/>
+<img alt="alt text" class="center" src="images/Labs/Slide100.png" style="width: 90%"/>
+<img alt="alt text" class="center" src="images/Labs/Slide101.png" style="width: 90%"/></p>
+<h2 id="once-yaml-file-is-crafted-here-is-how-to-apply-it">Once YAML file is crafted, here is how to apply it:<a class="headerlink" href="#once-yaml-file-is-crafted-here-is-how-to-apply-it" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code>kubectl apply -f <span class="o">[</span>fileName<span class="o">]</span>.yaml
+</code></pre></div>
+<h3 id="get-logs-of-applying-yaml-file">Get logs of applying YAML file<a class="headerlink" href="#get-logs-of-applying-yaml-file" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code>kubectl log –l <span class="nv">app</span><span class="o">=[</span>container name<span class="o">]</span>
+</code></pre></div>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">¶</a></h2>
+<p><img alt="alt text" class="center" src="images/Labs/Slide103.png" style="width: 80%"/></p>
+</article>
+</div>
+</div>
+</main>
+<footer class="md-footer">
+<div class="md-footer-nav">
+<nav aria-label="Footer" class="md-footer-nav__inner md-grid">
+<a class="md-footer-nav__link md-footer-nav__link--prev" href="part2.html" rel="prev" title="Microservices">
+<div class="md-footer-nav__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</div>
+<div class="md-footer-nav__title">
+<div class="md-ellipsis">
+<span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Microservices
+              </div>
+</div>
+</a>
+<a class="md-footer-nav__link md-footer-nav__link--next" href="part4.html" rel="next" title="OpenShift on IBM Cloud">
+<div class="md-footer-nav__title">
+<div class="md-ellipsis">
+<span class="md-footer-nav__direction">
+                  Next
+                </span>
+                OpenShift on IBM Cloud
+              </div>
+</div>
+<div class="md-footer-nav__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"></path></svg>
+</div>
+</a>
+</nav>
+</div>
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+          Material for MkDocs
+        </a>
+ ... <a download href="pdf/covid19-Applicationx.pdf" title="PDF">download PDF</a></div>
+</div>
+</div>
+</footer>
+</div>
+<script src="assets/javascripts/vendor.d1f5a259.min.js"></script>
+<script src="assets/javascripts/bundle.f9edbbd5.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+<script>
+        app = initialize({
+          base: ".",
+          features: [],
+          search: Object.assign({
+            worker: "assets/javascripts/worker/search.fae956e7.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+</body>
+</html>

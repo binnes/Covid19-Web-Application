@@ -1,0 +1,713 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="This is a series of 7 x hands-on workshops, teaching you how to retrieve covid-19 data from an authentic source, make them securely available through REST APIS on kubernetes and Openshift." name="description"/>
+<link href="https://binnes.github.io/Covid19-Web-Application/part4.html" rel="canonical"/>
+<meta content="Mo Haghighi" name="author"/>
+<link href="assets/images/favicon.png" rel="shortcut icon"/>
+<meta content="mkdocs-1.1.2, mkdocs-material-5.5.5" name="generator"/>
+<title>OpenShift on IBM Cloud - Covid-19 Data Analytics with Kubernetes</title>
+<link href="assets/stylesheets/main.63b94e9e.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&amp;display=fallback" rel="stylesheet"/>
+<style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+<link href="css/extra.css" rel="stylesheet"/>
+<link href="css/pdf-print.css" rel="stylesheet"/>
+<script>window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","UA-172132667-1","binnes.github.io/Covid19-Web-Application"),ga("set","anonymizeIp",!0),ga("send","pageview"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){if(this.value){var e=document.location.pathname;ga("send","pageview",e+"?q="+this.value)}})}),document.addEventListener("DOMContentSwitch",function(){ga("send","pageview",document.location.pathname)})</script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
+</head>
+<body dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#part-4-build-deploy-and-manage-your-microservices-application-with-openshift">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header-nav md-grid">
+<a aria-label="Covid-19 Data Analytics with Kubernetes" class="md-header-nav__button md-logo" href="https://binnes.github.io/Covid19-Web-Application/" title="Covid-19 Data Analytics with Kubernetes">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"></path></svg>
+</a>
+<label class="md-header-nav__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"></path></svg>
+</label>
+<div class="md-header-nav__title" data-md-component="header-title">
+<div class="md-header-nav__ellipsis">
+<span class="md-header-nav__topic md-ellipsis">
+            Covid-19 Data Analytics with Kubernetes
+          </span>
+<span class="md-header-nav__topic md-ellipsis">
+            
+              OpenShift on IBM Cloud
+            
+          </span>
+</div>
+</div>
+<label class="md-header-nav__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" data-md-state="active" name="query" placeholder="Search" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</label>
+<button aria-label="Clear" class="md-search__icon md-icon" data-md-component="search-reset" tabindex="-1" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"></path></svg>
+</button>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header-nav__source">
+<a class="md-source" href="https://github.com/binnes/Covid19-Web-Application/" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    binnes/Covid19-Web-Application
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Covid-19 Data Analytics with Kubernetes" class="md-nav__button md-logo" href="https://binnes.github.io/Covid19-Web-Application/" title="Covid-19 Data Analytics with Kubernetes">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"></path></svg>
+</a>
+    Covid-19 Data Analytics with Kubernetes
+  </label>
+<div class="md-nav__source">
+<a class="md-source" href="https://github.com/binnes/Covid19-Web-Application/" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    binnes/Covid19-Web-Application
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="index.html" title="Home">
+      Home
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="part1.html" title="Architecture">
+      Architecture
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="part2.html" title="Microservices">
+      Microservices
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="part3.html" title="Kubernetes">
+      Kubernetes
+    </a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+        OpenShift on IBM Cloud
+        <span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"></path></svg>
+</span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="part4.html" title="OpenShift on IBM Cloud">
+      OpenShift on IBM Cloud
+    </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#agenda">
+    Agenda
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#what-is-openshift-container-platform">
+    What is OpenShift Container Platform?
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#3-x-key-features-of-openshift-over-kubernetes-automation-agility-and-security">
+    3 x key features of OpenShift over Kubernetes. Automation, Agility and Security.
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#what-are-the-automated-workflows">
+    what are the automated workflows?
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#three-major-differences-between-kubernetes-and-openshift">
+    Three major differences between Kubernetes and OpenShift
+  </a>
+<nav aria-label="Three major differences between Kubernetes and OpenShift" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cli-vs-console">
+    CLI vs. Console
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#project-vs-product">
+    Project vs. Product
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cloud-platforms-offerings">
+    Cloud Platforms Offerings
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#download-and-install-prerequisites">
+    Download and Install prerequisites
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#login-to-ibm-cloud-and-check-your-installed-plugins">
+    Login to IBM Cloud and check your installed plugins
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#push-image-to-ibm-container-registry">
+    Push Image to IBM Container Registry
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#oc-commands">
+    OC commands
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#some-useful-oc-commands">
+    Some useful OC commands
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#create-deployment-using-an-image-from-ibm-cloud-container-registry">
+    Create Deployment using an image from IBM Cloud Container Registry
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#expose-the-current-deployment-to-the-internet">
+    Expose the current deployment to the Internet
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pull-images-from-icr-into-non-default-projects">
+    Pull Images from ICR into non-Default Projects
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#verify-that-the-new-project-can-pull-images-from-icr">
+    Verify that the new project can pull images from ICR
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#scale-and-replicas">
+    Scale and Replicas
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#rolling-out-updates-and-rolling-back">
+    Rolling out updates and Rolling back
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#summary">
+    Summary
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="part5.html" title="CodeReady Workspaces">
+      CodeReady Workspaces
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="part6.html" title="CodeReady Containers">
+      CodeReady Containers
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="part7.html" title="CI/CD with Jenkins and Tekton">
+      CI/CD with Jenkins and Tekton
+    </a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#agenda">
+    Agenda
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#what-is-openshift-container-platform">
+    What is OpenShift Container Platform?
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#3-x-key-features-of-openshift-over-kubernetes-automation-agility-and-security">
+    3 x key features of OpenShift over Kubernetes. Automation, Agility and Security.
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#what-are-the-automated-workflows">
+    what are the automated workflows?
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#three-major-differences-between-kubernetes-and-openshift">
+    Three major differences between Kubernetes and OpenShift
+  </a>
+<nav aria-label="Three major differences between Kubernetes and OpenShift" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cli-vs-console">
+    CLI vs. Console
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#project-vs-product">
+    Project vs. Product
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cloud-platforms-offerings">
+    Cloud Platforms Offerings
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#download-and-install-prerequisites">
+    Download and Install prerequisites
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#login-to-ibm-cloud-and-check-your-installed-plugins">
+    Login to IBM Cloud and check your installed plugins
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#push-image-to-ibm-container-registry">
+    Push Image to IBM Container Registry
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#oc-commands">
+    OC commands
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#some-useful-oc-commands">
+    Some useful OC commands
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#create-deployment-using-an-image-from-ibm-cloud-container-registry">
+    Create Deployment using an image from IBM Cloud Container Registry
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#expose-the-current-deployment-to-the-internet">
+    Expose the current deployment to the Internet
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pull-images-from-icr-into-non-default-projects">
+    Pull Images from ICR into non-Default Projects
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#verify-that-the-new-project-can-pull-images-from-icr">
+    Verify that the new project can pull images from ICR
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#scale-and-replicas">
+    Scale and Replicas
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#rolling-out-updates-and-rolling-back">
+    Rolling out updates and Rolling back
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#summary">
+    Summary
+  </a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content">
+<article class="md-content__inner md-typeset">
+<a class="md-content__button md-icon" href="https://github.com/binnes/Covid19-Web-Application/edit/master/docs/part4.md" title="Edit this page">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"></path></svg>
+</a>
+<h1 id="part-4-build-deploy-and-manage-your-microservices-application-with-openshift">Part 4: Build, Deploy and Manage your Microservices Application with OpenShift<a class="headerlink" href="#part-4-build-deploy-and-manage-your-microservices-application-with-openshift" title="Permanent link">¶</a></h1>
+<p><a href="https://youtu.be/ewj_jG4TgkE"><img alt='"Demonstration of instructor completing this tutorial"' class="center" src="images/Labs/Part4-youtube.png" style="width: 80%"/></a></p>
+<h2 id="agenda">Agenda<a class="headerlink" href="#agenda" title="Permanent link">¶</a></h2>
+<p>In this section you will learn:
+- Why OpenShift?
+- Kubernetes vs. OpenShift
+- Developer productivity
+- Deploy on OpenShift via CLI
+    - Pushing image to registry
+    - Create deployment
+    - Expose 
+- Deploy on OpenShift via Console
+    - OpenShift Console
+    - Builder Images
+    - S2I (Source to Image)</p>
+<p><img alt="alt text" class="center" src="images/Labs/Slide108.png" style="width: 80%"/></p>
+<h2 id="what-is-openshift-container-platform">What is OpenShift Container Platform?<a class="headerlink" href="#what-is-openshift-container-platform" title="Permanent link">¶</a></h2>
+<p><img alt="alt text" class="center" src="images/Labs/Slide114.png" style="width: 80%"/></p>
+<p>OpenShift is built on top of Kubernetes, and brings along all the brilliant features of Kubernetes, but it bundles Kubernetes with all the Essential features that will ultimately provide the best experience to both developers and Operation engineers.</p>
+<p>But how does it achieve that?</p>
+<p>Through a number of automated workflows, which are not available in Kubernetes.</p>
+<p>Those automated workflows are the results of these components that are drawn in this diagram.</p>
+<p>Kubernetes is wrapped around an enterprise-grade linux operating system (RHEL/CoreOS), Networking, monitoring, registry, and more importantly, authentication and authorisation.</p>
+<h2 id="3-x-key-features-of-openshift-over-kubernetes-automation-agility-and-security">3 x key features of OpenShift over Kubernetes. Automation, Agility and Security.<a class="headerlink" href="#3-x-key-features-of-openshift-over-kubernetes-automation-agility-and-security" title="Permanent link">¶</a></h2>
+<p><img alt="alt text" class="center" src="images/Labs/Slide115.png" style="width: 80%"/></p>
+<h2 id="what-are-the-automated-workflows">what are the automated workflows?<a class="headerlink" href="#what-are-the-automated-workflows" title="Permanent link">¶</a></h2>
+<p><img alt="alt text" class="center" src="images/Labs/Slide116.png" style="width: 80%"/></p>
+<ul>
+<li>As a developer you want to get started on coding as quickly as possible, rather than spending time learning about different platforms, tools and services, and how to refactor your application based on them. </li>
+</ul>
+<p>Pre-created quick start application templates to build your application, based on your favourite languages, frameworks, and databases, with one click.</p>
+<ul>
+<li>As a developer you want to focus on coding and not worrying about what's going to happen in the background.</li>
+</ul>
+<p>Deploying to OpenShift is as easy as clicking a button or entering a <strong>git push</strong> command, <strong>enabling continuous integration</strong>, managing builds, and allows you to fully control the deployment lifecycle.</p>
+<ul>
+<li>As a developer you want to build and test your application locally, without worrying about the openshift cluster your application will end up running in.</li>
+</ul>
+<p>Develop container-based applications in the cloud or locally using the Red Hat CodeReady Containers to create a fully-functioning OpenShift instance <strong>on your local machine</strong>. Then, deploy your work to any OpenShift cluster.</p>
+<p><img alt="alt text" class="center" src="images/Labs/Slide117.png" style="width: 80%"/></p>
+<p>As this figure shows developers can focus on coding, and the rest of the process is taken care of by OpenShift's S2I or Source to Image. Building your image, deploying, and as you will later in part 7, continues integration.</p>
+<h2 id="three-major-differences-between-kubernetes-and-openshift">Three major differences between Kubernetes and OpenShift<a class="headerlink" href="#three-major-differences-between-kubernetes-and-openshift" title="Permanent link">¶</a></h2>
+<h3 id="cli-vs-console">CLI vs. Console<a class="headerlink" href="#cli-vs-console" title="Permanent link">¶</a></h3>
+<p><img alt="alt text" class="center" src="images/Labs/Slide118.png" style="width: 80%"/></p>
+<p>One of the most distinctive features of OpenShift is its amazing web console that allows to implements almost all tasks from a simple graphical interface. As you saw in the previous lab, Kubernetes dashboard is only good for displaying the status of your resources. You can't deploy, control or manage your applications, networking or any of those form Kubernetes dashboard.  Obviously, managed Kubernetes on different cloud platforms, come with different set of functionalities as add-ons.  But with Openshift container platfomr, the offered functionalities through the openshift console are vast. You can build, deploy, expose, update, and almost implement any task in two separate perspectives of developer and administrator. We'll go through that later in this lab.  </p>
+<h3 id="project-vs-product">Project vs. Product<a class="headerlink" href="#project-vs-product" title="Permanent link">¶</a></h3>
+<p><img alt="alt text" class="center" src="images/Labs/Slide119.png" style="width: 80%"/></p>
+<p>Kubernetes is an opensource project, where as Openshift is a product based on an open source project, which is Kubernetes Origin Distribution or OKD. [next] Comparing Kubernetes with OpenShift is like that classical example of comparing an engine with a car. You can't do much with an engine, and you need to assemble it with other components in order to get from A to B and become productive. What you get with OpenShift includes enterprise support, ecosystem certification And most importantly, regular releases and security updates at every level of the container stack and throughout the application lifecycle. That is an opinionated integration of features to simplify and secure your applications.</p>
+<h3 id="cloud-platforms-offerings">Cloud Platforms Offerings<a class="headerlink" href="#cloud-platforms-offerings" title="Permanent link">¶</a></h3>
+<p><img alt="alt text" class="center" src="images/Labs/Slide121.png" style="width: 80%"/></p>
+<p>Kubernetes offerings differ from one platform to another. Almost every major cloud provider offers a different flavour of Kubernetes. You get different sets of add-ons, plug-in and set of instructions for connecting your application to your cloud resources, which in most cases are only applicable to that particular platform. With openshift container platform, your experience and the way you interact with with the platform, let's say the openshift console, stays the same. Therefore, building, deploying and managing applications with Openshift container platform is truly: build it once and deploy it anywhere.</p>
+<p><img alt="alt text" class="center" src="images/Labs/Slide122.png" style="width: 80%"/></p>
+<p>In this lab we're going to use managed openshift on IBM Cloud. Before continuing, let's get started by provisions an OpenShift cluster on IBM Cloud.<br/>
+Red Hat® OpenShift on IBM Cloud™ is a fully managed OpenShift service that leverages the enterprise scale and security of IBM Cloud, so you can focus on growing applications, not scaling the master.</p>
+<p>IBM has added unique security and productivity capabilities designed to eliminate substantial time spent on updating, scaling and provisioning.</p>
+<p><img alt="alt text" class="center" src="images/Labs/Slide123.png" style="width: 80%"/></p>
+<p>Once you've signed up on IBM Cloud and sign into your account by visiting cloud.ibm.com, you need to navigate through ibm cloud dashboard and choose OpenShift. Then go ahead and create your cluster. Once your cluster is provisioned and ready, it'll be listed in this table.</p>
+<h2 id="download-and-install-prerequisites">Download and Install prerequisites<a class="headerlink" href="#download-and-install-prerequisites" title="Permanent link">¶</a></h2>
+<p>Install IBM CLI tools</p>
+<div class="highlight"><pre><span></span><code>curl -sL https://ibm.biz/idt-installer <span class="p">|</span> bash
+</code></pre></div>
+<p>Download OC CLI based on local OS and OpenShift version</p>
+<div class="highlight"><pre><span></span><code>https://mirror.openshift.com/pub/openshift-v4/clients/oc/
+</code></pre></div>
+<p>Download kubectl</p>
+<div class="highlight"><pre><span></span><code>https://storage.googleapis.com/Kubernetesrelease/release/v1.17.7/bin/darwin/amd64/kubectl
+</code></pre></div>
+<p>Set your environmental parameters for OC</p>
+<div class="highlight"><pre><span></span><code>mv /&lt;filepath&gt;/oc /usr/local/bin/oc
+</code></pre></div>
+<p>Set your environmental parameters for kubectl</p>
+<div class="highlight"><pre><span></span><code>mv /&lt;filepath&gt;/kubectl/usr/local/bin/kubectl
+</code></pre></div>
+<h2 id="login-to-ibm-cloud-and-check-your-installed-plugins">Login to IBM Cloud and check your installed plugins<a class="headerlink" href="#login-to-ibm-cloud-and-check-your-installed-plugins" title="Permanent link">¶</a></h2>
+<p>Login to IBM Cloud</p>
+<div class="highlight"><pre><span></span><code>ibmcloud login
+</code></pre></div>
+<p>if using a federated account</p>
+<div class="highlight"><pre><span></span><code>ibmcloud login --sso
+</code></pre></div>
+<p>List IBM Cloud plugins</p>
+<div class="highlight"><pre><span></span><code>ibmcloud plugin list
+</code></pre></div>
+<p>List IBM Cloud Openshift clusters</p>
+<div class="highlight"><pre><span></span><code>ibmcloud oc cluster ls
+</code></pre></div>
+<p>Initialize OC CLI Client</p>
+<div class="highlight"><pre><span></span><code>ibmcloud oc init
+</code></pre></div>
+<p>Log your local Docker daemon into the IBM Cloud Container Registry</p>
+<div class="highlight"><pre><span></span><code>ibmcloud cr login
+</code></pre></div>
+<p>Test your OC CLI</p>
+<div class="highlight"><pre><span></span><code>ibmcloud oc
+</code></pre></div>
+<p>Test your Container Registry</p>
+<div class="highlight"><pre><span></span><code>ibmcloud cr
+</code></pre></div>
+<p><img alt="alt text" class="center" src="images/Labs/Slide126.png" style="width: 80%"/></p>
+<h2 id="push-image-to-ibm-container-registry">Push Image to IBM Container Registry<a class="headerlink" href="#push-image-to-ibm-container-registry" title="Permanent link">¶</a></h2>
+<p>Create a new namespace in IBM Cloud Container Registry</p>
+<div class="highlight"><pre><span></span><code>ibmcloud cr namespace-add <span class="o">[</span>namespace<span class="o">]</span>
+</code></pre></div>
+<p>Tag the image</p>
+<div class="highlight"><pre><span></span><code>docker tag <span class="o">[</span>image name<span class="o">]</span> us.icr.io/<span class="o">[</span>namespace<span class="o">]</span>/<span class="o">[</span>image name<span class="o">]</span>
+</code></pre></div>
+<p>Push the image to container registry</p>
+<div class="highlight"><pre><span></span><code>docker push us.icr.io/<span class="o">[</span>namespace<span class="o">]</span>/<span class="o">[</span>image name<span class="o">]</span>
+</code></pre></div>
+<p>List images in IBM Cloud Container Registry</p>
+<div class="highlight"><pre><span></span><code>ibmcloud cr image-list
+</code></pre></div>
+<h2 id="oc-commands">OC commands<a class="headerlink" href="#oc-commands" title="Permanent link">¶</a></h2>
+<p>The developer OC CLI allows interaction with the various objects that are managed by OpenShift Container Platform. </p>
+<p>Here is the format of OC commands, almost identical with Kubectl</p>
+<div class="highlight"><pre><span></span><code>oc &lt;action&gt; &lt;object_type&gt; &lt;object_name&gt;
+</code></pre></div>
+<p><img alt="alt text" class="center" src="images/Labs/Slide128.png" style="width: 80%"/></p>
+<p>View existing projects</p>
+<div class="highlight"><pre><span></span><code>oc projects
+</code></pre></div>
+<p>Switch to a project</p>
+<div class="highlight"><pre><span></span><code>oc project <span class="o">[</span>project name<span class="o">]</span>
+</code></pre></div>
+<p>Create a new project</p>
+<div class="highlight"><pre><span></span><code>oc new-project <span class="o">[</span>name project<span class="o">]</span>
+</code></pre></div>
+<h2 id="some-useful-oc-commands">Some useful OC commands<a class="headerlink" href="#some-useful-oc-commands" title="Permanent link">¶</a></h2>
+<p>Get the full list of OC commands and parameters</p>
+<div class="highlight"><pre><span></span><code>oc --help
+</code></pre></div>
+<p>In-depth look into the values to be set</p>
+<div class="highlight"><pre><span></span><code>oc explain <span class="o">[</span>resource<span class="o">]</span>
+</code></pre></div>
+<p>Edit the desired object type</p>
+<div class="highlight"><pre><span></span><code>oc edit &lt;object_type&gt;/&lt;object_name&gt;
+</code></pre></div>
+<p>Updates one or more fields of an object (The changes is a JSON or YAML expression containing the new fields and the values)</p>
+<div class="highlight"><pre><span></span><code>oc patch &lt;object_type&gt; &lt;object_name&gt; -p &lt;changes&gt;
+</code></pre></div>
+<h2 id="create-deployment-using-an-image-from-ibm-cloud-container-registry">Create Deployment using an image from IBM Cloud Container Registry<a class="headerlink" href="#create-deployment-using-an-image-from-ibm-cloud-container-registry" title="Permanent link">¶</a></h2>
+<p>Create a deployment by instructing the OpenShift cluster to pull an image from ICR</p>
+<div class="highlight"><pre><span></span><code>oc create deployment <span class="o">[</span>dep name<span class="o">]</span> --image<span class="o">=</span>us.icr.io/covid-test/myapp:v1
+</code></pre></div>
+<p>Get the list of deployments (same as Kubectl)</p>
+<div class="highlight"><pre><span></span><code>oc get deployment
+</code></pre></div>
+<p>Get the list of pods (same as Kubectl)</p>
+<div class="highlight"><pre><span></span><code>oc get pods
+</code></pre></div>
+<h2 id="expose-the-current-deployment-to-the-internet">Expose the current deployment to the Internet<a class="headerlink" href="#expose-the-current-deployment-to-the-internet" title="Permanent link">¶</a></h2>
+<p>Expose the deployment on container port 8082 with LoadBalancer service type</p>
+<div class="highlight"><pre><span></span><code>oc expose deployment/mytestservice --port<span class="o">=</span><span class="m">8082</span> --type<span class="o">=</span>LoadBalancer
+</code></pre></div>
+<p>Get the list of services</p>
+<div class="highlight"><pre><span></span><code> oc get services
+</code></pre></div>
+<p><img alt="alt text" class="center" src="images/Labs/Slide131.png" style="width: 80%"/></p>
+<p>Every OpenShift project has a Kubernetes service account that is named <strong>default</strong>. Within the project, you can add the image pull secret to this service account to grant access for pods to pull images from your registry.</p>
+<h2 id="pull-images-from-icr-into-non-default-projects">Pull Images from ICR into non-Default Projects<a class="headerlink" href="#pull-images-from-icr-into-non-default-projects" title="Permanent link">¶</a></h2>
+<ul>
+<li>Create an IBM Cloud IAM service ID for your cluster that is used for the IAM policies and API key credentials in the image pull secret.</li>
+<li>Create a custom IBM Cloud IAM policy for your cluster service ID that grants access to IBM Cloud Container Registry.</li>
+<li>Create an API key for the service ID</li>
+<li>Create an image pull secret to store the API key credentials in the cluster project</li>
+<li>Store the registry credentials in a Kubernetes image pull secret and reference this secret from your configuration file.</li>
+<li>Add the image pull secret to your default service account.</li>
+</ul>
+<p>Create an IBM Cloud IAM service ID</p>
+<div class="highlight"><pre><span></span><code>ibmcloud iam service-id-create cluster-project-id --description <span class="s2">"service ID for cluster-project"</span>
+</code></pre></div>
+<p>Create a custom IBM Cloud IAM policy for your cluster service ID</p>
+<div class="highlight"><pre><span></span><code>ibmcloud iam service-policy-create iam-service-id --roles Manager --service-name container-registry
+</code></pre></div>
+<p>Create an API key for the service ID</p>
+<div class="highlight"><pre><span></span><code>ibmcloud iam service-api-key-create <span class="o">[</span>api-key-name<span class="o">]</span> <span class="o">[</span>service-policy-id<span class="o">]</span> --description <span class="s2">"API Key"</span>
+</code></pre></div>
+<p>Create an image pull secret to store the API key &amp; store the registry credentials in K8s image pull secret</p>
+<div class="highlight"><pre><span></span><code>oc --namespace <span class="o">[</span>project<span class="o">]</span> create secret docker-registry <span class="o">[</span>secret name<span class="o">]</span> --docker-server<span class="o">=</span>us.icr.io --docker-username<span class="o">=</span>iamapikey --docker-password<span class="o">=[</span>API-key<span class="o">]</span> --docker-email<span class="o">=[]</span>
+</code></pre></div>
+<p>Get all secrets in project</p>
+<div class="highlight"><pre><span></span><code>oc get secrets --namespace <span class="o">[</span>project<span class="o">]</span>
+</code></pre></div>
+<p>Get secrets in 'default' serviceaccount in project []</p>
+<div class="highlight"><pre><span></span><code>oc describe serviceaccount default -n <span class="o">[</span>project<span class="o">]</span>
+</code></pre></div>
+<p>Add the image pull secret to your default service account</p>
+<div class="highlight"><pre><span></span><code>oc patch -n &lt;project_name&gt; serviceaccount/default --type<span class="o">=</span><span class="s1">'json'</span> -p<span class="o">=</span><span class="s1">'[{"op":"add","path":"/imagePullSecrets/-","value":{"name":"&lt;image_pull_secret_name&gt;"}}]'</span>
+</code></pre></div>
+<p>Check the secrets again to verify the secret has been added the default serviceaccount.</p>
+<p>Get secrets in 'default' serviceaccount in project []</p>
+<div class="highlight"><pre><span></span><code>oc describe serviceaccount default -n <span class="o">[</span>project<span class="o">]</span>
+</code></pre></div>
+<h2 id="verify-that-the-new-project-can-pull-images-from-icr">Verify that the new project can pull images from ICR<a class="headerlink" href="#verify-that-the-new-project-can-pull-images-from-icr" title="Permanent link">¶</a></h2>
+<p>Create a deployment by pulling an image from ICR into the new peoject</p>
+<div class="highlight"><pre><span></span><code>oc create deployment <span class="o">[</span>new project<span class="o">]</span> --image<span class="o">=</span>us.icr.io/covid-test/myapp:v1
+</code></pre></div>
+<p>verify that image has been pulled and deployed successfully</p>
+<div class="highlight"><pre><span></span><code>oc get deployment
+</code></pre></div>
+<p>Expose the deployment</p>
+<div class="highlight"><pre><span></span><code>oc expose deployment/mytestservice --port<span class="o">=</span><span class="m">8082</span> --type<span class="o">=</span>LoadBalancer
+</code></pre></div>
+<p>Verify the service is up and running</p>
+<div class="highlight"><pre><span></span><code>oc get services
+</code></pre></div>
+<h2 id="scale-and-replicas">Scale and Replicas<a class="headerlink" href="#scale-and-replicas" title="Permanent link">¶</a></h2>
+<p>in this section we will create replicas of our deployed application. Openshift will considers the instructed number of instances as the desired state. If any pod fails or destroyed, OpenShift will bring that back up to keep the number of instances intact in order to meet the load.</p>
+<p><img alt="alt text" class="center" src="images/Labs/Slide136.png" style="width: 80%"/></p>
+<p>Sclae the application by creating 3 more instances</p>
+<div class="highlight"><pre><span></span><code>oc scale --replicas<span class="o">=</span><span class="m">4</span> deployment/<span class="o">[</span>deployed resource<span class="o">]</span>
+</code></pre></div>
+<p>Get the replicas</p>
+<div class="highlight"><pre><span></span><code>oc get rs
+</code></pre></div>
+<p>Verify the number of running pods (reflecting the number of instances)</p>
+<div class="highlight"><pre><span></span><code>oc get pods –o wide
+</code></pre></div>
+<h2 id="rolling-out-updates-and-rolling-back">Rolling out updates and Rolling back<a class="headerlink" href="#rolling-out-updates-and-rolling-back" title="Permanent link">¶</a></h2>
+<p><img alt="alt text" class="center" src="images/Labs/Slide138.png" style="width: 80%"/></p>
+<p>Rolling updates allow Deployments' update to take place with zero downtime by incrementally updating Pods instances with new ones. Performing updates without affecting application availability.</p>
+<p><img alt="alt text" class="center" src="images/Labs/Slide139.png" style="width: 80%"/></p>
+<p>In this part we're going to update our image to the parser for covid-19 mortality data reflect the number of death in every country country and region.</p>
+<div class="highlight"><pre><span></span><code>oc <span class="nb">set</span> image deployment/<span class="o">[</span>deployment name<span class="o">]</span> <span class="o">[</span>container<span class="o">]=[</span>new image<span class="o">]</span>
+</code></pre></div>
+<p>Make sure you use the container name in the above command to update the image in it.</p>
+<p>To get the container name, use:</p>
+<div class="highlight"><pre><span></span><code>oc get deployment -o wide
+</code></pre></div>
+<p>verify the deployment is updated by pinging the app</p>
+<div class="highlight"><pre><span></span><code>curl ip:port/hello/
+curl ip:port/get/country/data/germany/
+</code></pre></div>
+<p>To rollback to the previous version use:</p>
+<div class="highlight"><pre><span></span><code>oc rollout undo deployment/<span class="o">[</span>deployment Name<span class="o">]</span>
+</code></pre></div>
+<p>optional: You can add --to-revision=n in order to rollback to a specific version</p>
+<div class="highlight"><pre><span></span><code>oc rollout undo deployment/<span class="o">[</span>deployment Name<span class="o">]</span> --to-revision<span class="o">=</span><span class="m">2</span>
+</code></pre></div>
+<p>checkout the rollout status</p>
+<div class="highlight"><pre><span></span><code>oc rollout status deployment/<span class="o">[</span>deployment Name<span class="o">]</span>
+</code></pre></div>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">¶</a></h2>
+<p><img alt="alt text" class="center" src="images/Labs/Slide141.png" style="width: 80%"/></p>
+</article>
+</div>
+</div>
+</main>
+<footer class="md-footer">
+<div class="md-footer-nav">
+<nav aria-label="Footer" class="md-footer-nav__inner md-grid">
+<a class="md-footer-nav__link md-footer-nav__link--prev" href="part3.html" rel="prev" title="Kubernetes">
+<div class="md-footer-nav__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</div>
+<div class="md-footer-nav__title">
+<div class="md-ellipsis">
+<span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Kubernetes
+              </div>
+</div>
+</a>
+<a class="md-footer-nav__link md-footer-nav__link--next" href="part5.html" rel="next" title="CodeReady Workspaces">
+<div class="md-footer-nav__title">
+<div class="md-ellipsis">
+<span class="md-footer-nav__direction">
+                  Next
+                </span>
+                CodeReady Workspaces
+              </div>
+</div>
+<div class="md-footer-nav__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"></path></svg>
+</div>
+</a>
+</nav>
+</div>
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+          Material for MkDocs
+        </a>
+ ... <a download href="pdf/covid19-Applicationx.pdf" title="PDF">download PDF</a></div>
+</div>
+</div>
+</footer>
+</div>
+<script src="assets/javascripts/vendor.d1f5a259.min.js"></script>
+<script src="assets/javascripts/bundle.f9edbbd5.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+<script>
+        app = initialize({
+          base: ".",
+          features: [],
+          search: Object.assign({
+            worker: "assets/javascripts/worker/search.fae956e7.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+</body>
+</html>

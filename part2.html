@@ -1,0 +1,611 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="This is a series of 7 x hands-on workshops, teaching you how to retrieve covid-19 data from an authentic source, make them securely available through REST APIS on kubernetes and Openshift." name="description"/>
+<link href="https://binnes.github.io/Covid19-Web-Application/part2.html" rel="canonical"/>
+<meta content="Mo Haghighi" name="author"/>
+<link href="assets/images/favicon.png" rel="shortcut icon"/>
+<meta content="mkdocs-1.1.2, mkdocs-material-5.5.5" name="generator"/>
+<title>Microservices - Covid-19 Data Analytics with Kubernetes</title>
+<link href="assets/stylesheets/main.63b94e9e.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&amp;display=fallback" rel="stylesheet"/>
+<style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+<link href="css/extra.css" rel="stylesheet"/>
+<link href="css/pdf-print.css" rel="stylesheet"/>
+<script>window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","UA-172132667-1","binnes.github.io/Covid19-Web-Application"),ga("set","anonymizeIp",!0),ga("send","pageview"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){if(this.value){var e=document.location.pathname;ga("send","pageview",e+"?q="+this.value)}})}),document.addEventListener("DOMContentSwitch",function(){ga("send","pageview",document.location.pathname)})</script>
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
+</head>
+<body dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#part-2-build-your-microservice-container-with-docker">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header-nav md-grid">
+<a aria-label="Covid-19 Data Analytics with Kubernetes" class="md-header-nav__button md-logo" href="https://binnes.github.io/Covid19-Web-Application/" title="Covid-19 Data Analytics with Kubernetes">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"></path></svg>
+</a>
+<label class="md-header-nav__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"></path></svg>
+</label>
+<div class="md-header-nav__title" data-md-component="header-title">
+<div class="md-header-nav__ellipsis">
+<span class="md-header-nav__topic md-ellipsis">
+            Covid-19 Data Analytics with Kubernetes
+          </span>
+<span class="md-header-nav__topic md-ellipsis">
+            
+              Microservices
+            
+          </span>
+</div>
+</div>
+<label class="md-header-nav__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" data-md-state="active" name="query" placeholder="Search" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</label>
+<button aria-label="Clear" class="md-search__icon md-icon" data-md-component="search-reset" tabindex="-1" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"></path></svg>
+</button>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header-nav__source">
+<a class="md-source" href="https://github.com/binnes/Covid19-Web-Application/" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    binnes/Covid19-Web-Application
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Covid-19 Data Analytics with Kubernetes" class="md-nav__button md-logo" href="https://binnes.github.io/Covid19-Web-Application/" title="Covid-19 Data Analytics with Kubernetes">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"></path></svg>
+</a>
+    Covid-19 Data Analytics with Kubernetes
+  </label>
+<div class="md-nav__source">
+<a class="md-source" href="https://github.com/binnes/Covid19-Web-Application/" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    binnes/Covid19-Web-Application
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="index.html" title="Home">
+      Home
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="part1.html" title="Architecture">
+      Architecture
+    </a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+        Microservices
+        <span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"></path></svg>
+</span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="part2.html" title="Microservices">
+      Microservices
+    </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#agenda">
+    Agenda
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#clone-the-repositories">
+    Clone The Repositories
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#package-spring-boot-with-maven">
+    Package Spring Boot with Maven
+  </a>
+<nav aria-label="Package Spring Boot with Maven" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#what-is-a-container">
+    What is a container?
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#what-is-docker">
+    What is Docker?
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#technology-vs-toolkit">
+    Technology vs. Toolkit
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#docker-image-vs-docker-container">
+    Docker Image vs. Docker Container
+  </a>
+<nav aria-label="Docker Image vs. Docker Container" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#what-is-a-dockerfile">
+    What is a Dockerfile?
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#craft-your-dockerfile">
+    Craft your Dockerfile
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#building-docker-image-from-the-dockerfile">
+    Building Docker Image from the Dockerfile
+  </a>
+<nav aria-label="Building Docker Image from the Dockerfile" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#build-and-run-the-ui-app">
+    Build and Run the UI App
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#summary">
+    Summary
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="part3.html" title="Kubernetes">
+      Kubernetes
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="part4.html" title="OpenShift on IBM Cloud">
+      OpenShift on IBM Cloud
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="part5.html" title="CodeReady Workspaces">
+      CodeReady Workspaces
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="part6.html" title="CodeReady Containers">
+      CodeReady Containers
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="part7.html" title="CI/CD with Jenkins and Tekton">
+      CI/CD with Jenkins and Tekton
+    </a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#agenda">
+    Agenda
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#clone-the-repositories">
+    Clone The Repositories
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#package-spring-boot-with-maven">
+    Package Spring Boot with Maven
+  </a>
+<nav aria-label="Package Spring Boot with Maven" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#what-is-a-container">
+    What is a container?
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#what-is-docker">
+    What is Docker?
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#technology-vs-toolkit">
+    Technology vs. Toolkit
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#docker-image-vs-docker-container">
+    Docker Image vs. Docker Container
+  </a>
+<nav aria-label="Docker Image vs. Docker Container" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#what-is-a-dockerfile">
+    What is a Dockerfile?
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#craft-your-dockerfile">
+    Craft your Dockerfile
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#building-docker-image-from-the-dockerfile">
+    Building Docker Image from the Dockerfile
+  </a>
+<nav aria-label="Building Docker Image from the Dockerfile" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#build-and-run-the-ui-app">
+    Build and Run the UI App
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#summary">
+    Summary
+  </a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content">
+<article class="md-content__inner md-typeset">
+<a class="md-content__button md-icon" href="https://github.com/binnes/Covid19-Web-Application/edit/master/docs/part2.md" title="Edit this page">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"></path></svg>
+</a>
+<h1 id="part-2-build-your-microservice-container-with-docker">Part 2: Build your Microservice container with Docker<a class="headerlink" href="#part-2-build-your-microservice-container-with-docker" title="Permanent link">¶</a></h1>
+<p><a href="https://youtu.be/RMe2S30Cggc"><img alt='"Demonstration of instructor completing this tutorial"' class="center" src="images/Labs/Part2-youtube.png" style="width: 80%"/></a></p>
+<p>Here's a quick look at what you're going to learn throughout this workshop series - and how Docker fits into our learning journey.  In this lab you'll learn about containers, the basics of containerising microservices with Docker, how to run and connect docker containers and best practices for building docker images based on your application services' requirements.  </p>
+<p>In this lab, we'll containerise our application's microservices with Docker, and in the next lab, we'll deploy and manage them with Kubernetes. Later we'll use openshift to automate the entire process of containerising, deployment, scaling and management with a few clicks from the openshift web console.  </p>
+<h2 id="agenda">Agenda<a class="headerlink" href="#agenda" title="Permanent link">¶</a></h2>
+<p>In this section you will learn:</p>
+<ul>
+<li>Install/download prerequisites</li>
+<li>Package Java Maven application</li>
+<li>Test Java application</li>
+<li>Docker<ul>
+<li>Dockerfile</li>
+<li>Build Docker image</li>
+<li>Run Docker containers</li>
+<li>Use Kubernetes Docker daemon</li>
+<li>Docker Registry</li>
+<li>SSH into Docker images</li>
+<li>Connecting Docker containers</li>
+<li>Inspect Docker Containers</li>
+</ul>
+</li>
+</ul>
+<p><img alt="alt text" class="center" src="images/Labs/Slide26.png" style="width: 80%"/></p>
+<p>In the previous labs, we broke down our application into several microservices based on their functionalities and purposes, and in this lab we'll containerise them with Docker, and use docker to run them.</p>
+<p>Therefore, we convert our monolithic application into a multi-container application.</p>
+<p>If you want to review how this application has been designed and how microservices architecture optimised it, please refer to the previous workshop.</p>
+<p>You may ask why Docker?</p>
+<p>Well, Modern application development and app modernisation techniques consist of three important stages of Build, Deploy and Manage.</p>
+<p>Docker plays a vital role in the build stage, and even partially the deployment phase.</p>
+<p>As you can see from this slide, for stages we're going to follow in this workshop series, Docker is responsible for all initial steps.</p>
+<p><img alt="alt text" class="center" src="images/Labs/Slide32.png" style="width: 80%"/></p>
+<p>Let's start by clining the repos and packaging our Java application with Maven:</p>
+<h2 id="clone-the-repositories">Clone The Repositories<a class="headerlink" href="#clone-the-repositories" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code>git clone github.com/mohaghighi/covid19-web-application
+git clone github.com/mohaghighi/covid19-UI
+</code></pre></div>
+<h2 id="package-spring-boot-with-maven">Package Spring Boot with Maven<a class="headerlink" href="#package-spring-boot-with-maven" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code>./mvnw clean install
+</code></pre></div>
+<p>Run the jar file to test the Spring Boot application:</p>
+<div class="highlight"><pre><span></span><code>java -jar target/<span class="o">[</span>filename<span class="o">]</span>.jar
+</code></pre></div>
+<p>Data Parser runs on port 8082. if you want to change th <em>Port Number</em>, you need to edit <strong><em>"application.properties"</em></strong> file under src/main/java/resources/</p>
+<div class="highlight"><pre><span></span><code>curl http://localhost:8082
+</code></pre></div>
+<p>Now we've ogot our application ready to be containerised with Docker. Before we dive deeper into Docker, let's explore what containers are and how docker fits in containerisation technology.  </p>
+<h3 id="what-is-a-container">What is a container?<a class="headerlink" href="#what-is-a-container" title="Permanent link">¶</a></h3>
+<blockquote>
+<p>Containers are executable units of software in which application code is packaged, along with its libraries and dependencies, in common ways so that they can be run anywhere, whether it be on desktop, traditional IT, or the cloud.</p>
+</blockquote>
+<h2 id="what-is-docker">What is Docker?<a class="headerlink" href="#what-is-docker" title="Permanent link">¶</a></h2>
+<blockquote>
+<p>“Docker is the de facto standard to build and share containerized apps - from desktop, to the cloud”</p>
+</blockquote>
+<p>You may ask why Docker?</p>
+<p>Modern application development and app modernisation techniques consist of three important stages of Build, Deploy and Manage.</p>
+<p>Docker plays a vital role in the build stage, and even partially the deployment phase.</p>
+<p>As you can see from this slide, for stages we're going to follow in this workshop series, Docker is responsible for all initial steps.</p>
+<h2 id="technology-vs-toolkit">Technology vs. Toolkit<a class="headerlink" href="#technology-vs-toolkit" title="Permanent link">¶</a></h2>
+<p>containers have been around for quite some time, and developers can create containers without Docker --  but Docker makes it easier, simpler, and safer to build, deploy, and manage containers. Docker is essentially the first toolkit that due to its simplicity, enabled all developers to build, deploy, run, update, and stop containers using simple commands and work-saving automation.</p>
+<p><img alt="alt text" class="center" src="images/Labs/Slide35.png" style="width: 80%"/></p>
+<h2 id="docker-image-vs-docker-container">Docker Image vs. Docker Container<a class="headerlink" href="#docker-image-vs-docker-container" title="Permanent link">¶</a></h2>
+<blockquote>
+<p>Docker container image is a lightweight, standalone, executable package of software that includes everything needed to run an application: code, runtime, system tools, system libraries and settings. (only interacting with designated resources)</p>
+<p>Container <strong><em>*<ins>images become containers at runtime</ins></em></strong>* and in the case of Docker containers - images become containers when they run on Docker.  </p>
+</blockquote>
+<p>So let's get started and build our first container image with Docker.</p>
+<blockquote>
+<p>The first step is to craft our dockerfile and the Dockerfile is essentially the build instructions to build the image.</p>
+</blockquote>
+<p><img alt="alt text" class="center" src="images/Labs/Slide36.png" style="width: 80%"/></p>
+<h3 id="what-is-a-dockerfile">What is a Dockerfile?<a class="headerlink" href="#what-is-a-dockerfile" title="Permanent link">¶</a></h3>
+<p>A set of build instructions to build the image in a file called "dockerfile".</p>
+<h3 id="craft-your-dockerfile">Craft your Dockerfile<a class="headerlink" href="#craft-your-dockerfile" title="Permanent link">¶</a></h3>
+<p><img alt="alt text" class="center" src="images/Labs/Slide40.png" style="width: 80%"/></p>
+<p>The first part is the FROM command, which tells docker what image to base this off of. The FROM instruction sets the Base Image for subsequent instructions. It'll start by pulling an image from the Public Repositories.</p>
+<p>ARG defines instructions to define variables. ENV is similar to ENV but mainly meant to provide default values for your future environment variables. ARG values are not available after the image is built.  </p>
+<p>The COPY instruction copies new files or directories from &lt;src&gt; and adds them to the filesystem of the container at the path &lt;dest&gt;.  It can copy a file (in the same directory as the Dockerfile) to the container</p>
+<p>The ADD instruction copies new files, directories or remote file URLs from &lt;src&gt; and adds them to the filesystem of the image at the path &lt;dest&gt;.  </p>
+<p>The ENV instruction sets the environment variable &lt;key&gt; to the value &lt;value&gt;.  </p>
+<p>This is what runs within the container at build time. The RUN instruction will execute any commands in a new layer on top of the current image and commit the results.  </p>
+<p>An ENTRYPOINT allows you to configure a container that will run as an executable.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>should add '&amp;' to run in the background</p>
+</div>
+<p>[Entry Point/CMD] ENTRYPOINT instruction allows you to configure a container that will run as an executable. It looks similar to CMD, because it also allows you to specify a command with parameters. The difference is ENTRYPOINT command and parameters are not ignored when Docker container runs with command line parameters.</p>
+<p>The EXPOSE instruction informs Docker that the container listens on the specified network ports at runtime. The EXPOSE instruction does not actually publish the port. It functions as a type of documentation between the person who builds the image and the person who runs the container, about which ports are intended to be published.</p>
+<p>In the case of our Data Parser Spring Boot application:</p>
+<div class="highlight"><pre><span></span><code><span class="k">FROM</span> <span class="s">adoptopenjdk/openjdk11:latest</span>
+<span class="k">ARG</span> <span class="nv">JAR_FILE</span><span class="o">=</span>target/*.jar
+<span class="k">COPY</span> <span class="si">${</span><span class="nv">JAR_FILE</span><span class="si">}</span> app.jar
+<span class="k">ENTRYPOINT</span> <span class="p">[</span><span class="s2">"java"</span><span class="p">,</span><span class="s2">"-jar"</span><span class="p">,</span><span class="s2">"/app.jar"</span><span class="p">]</span>
+</code></pre></div>
+<p>Dockerfile for Node.js application:</p>
+<div class="highlight"><pre><span></span><code><span class="k">FROM</span> <span class="s">node:12</span>
+<span class="k">COPY</span> package*.json ./
+<span class="k">RUN</span> npm install
+<span class="k">ENTRYPOINT</span> <span class="p">[</span><span class="err">”node</span><span class="s2">",”app.js"</span><span class="p">]</span>
+</code></pre></div>
+<p>Dockerfile for Python application:</p>
+<div class="highlight"><pre><span></span><code><span class="k">FROM</span> <span class="s">python:3</span>
+<span class="k">COPY</span> package.py ./
+<span class="k">RUN</span> pip install pystrich
+<span class="k">ENTRYPOINT</span> <span class="p">[</span><span class="err">”python</span><span class="s2">",”./app.py"</span><span class="p">]</span>
+</code></pre></div>
+<p>save the file as <ins>dockerfile</ins> with no file extension.</p>
+<h2 id="building-docker-image-from-the-dockerfile">Building Docker Image from the Dockerfile<a class="headerlink" href="#building-docker-image-from-the-dockerfile" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code>docker build -t <span class="o">[</span>image name:v1<span class="o">]</span> <span class="o">[</span>path<span class="o">]</span>
+</code></pre></div>
+<p>in this case, let's call it myapp:v1</p>
+<div class="highlight"><pre><span></span><code>docker build -t myapp:v1 .
+</code></pre></div>
+<p>let's take a look at our docker images:</p>
+<div class="highlight"><pre><span></span><code>docker images
+</code></pre></div>
+<p>our image must be listed there.  </p>
+<p>now let's a look at running containers:</p>
+<div class="highlight"><pre><span></span><code>docker ps
+</code></pre></div>
+<p>if you add -al, you can view all running and stopped containers</p>
+<div class="highlight"><pre><span></span><code>docker ps -al
+</code></pre></div>
+<p>Here's the command for running the docker container</p>
+<div class="highlight"><pre><span></span><code>docker run -p <span class="o">[</span>PortHost:PortContainer<span class="o">]</span> <span class="o">[</span>imageName<span class="o">]</span> -d --rm
+</code></pre></div>
+<p>Now let's go ahead and run our container on port 8082:</p>
+<div class="highlight"><pre><span></span><code>docker run -p <span class="m">8082</span>:8082 myapp:v1 -d
+</code></pre></div>
+<p>-d and --rm flags will respectively run the docker in detached, mode and replace an existing docker image of the same name with the name one.<br/>
+We can ping the application by invoking the /hello/ REST endpoint:</p>
+<div class="highlight"><pre><span></span><code>curl localhost:8082/hello/
+</code></pre></div>
+<h3 id="build-and-run-the-ui-app">Build and Run the UI App<a class="headerlink" href="#build-and-run-the-ui-app" title="Permanent link">¶</a></h3>
+<p>The UI application can be retrieved from here:
+<a href="https://github.com/mohaghighi/Covid19-UI.git">https://github.com/mohaghighi/Covid19-UI.git</a></p>
+<p>Now let's build the UI app and call it myui:v1
+Dockerfile is the same as the one we used for Data Parser app but changing the name to <strong><em>"myui"</em></strong></p>
+<div class="highlight"><pre><span></span><code>docker build -t myui:v1 .
+</code></pre></div>
+<blockquote>
+<p>in case you haven't run the maven build and packaged the UI App, run this where mvnm file is located</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code>./mvnm clean install
+</code></pre></div>
+<p>Now let's run the UI app on port 8081:</p>
+<div class="highlight"><pre><span></span><code>docker run -p <span class="m">8082</span>:8082 myapp:v1 -d
+</code></pre></div>
+<p>Open your browser and navigate to</p>
+<div class="highlight"><pre><span></span><code>localhost:8081
+</code></pre></div>
+<p>From the UI, click on connect on the top left hand corner and enter:</p>
+<div class="highlight"><pre><span></span><code>http://localhost:8082
+</code></pre></div>
+<p>As you may have seen, you got an error indicating that the server is not responding.  There reason is, we can connect to containers directly through Docker, but docker containers cannot discover or communicate with each other.</p>
+<p><img alt="alt text" class="center" src="images/Labs/Slide45.png" style="width: 80%"/></p>
+<p>now let's try to ssh into our one of the docker containers and try to connect to the other one to identify the problem.
+To simulate the issue that we've just expereinced with the UI app, let's ssh into our UI and try to connect to our data parser from within that container.</p>
+<p><img alt="alt text" class="center" src="images/Labs/Slide46.png" style="width: 80%"/></p>
+<div class="highlight"><pre><span></span><code>docker <span class="nb">exec</span> <span class="o">[</span>container name/ID<span class="o">]</span> -it
+</code></pre></div>
+<p>Here how we ssh into UI app</p>
+<div class="highlight"><pre><span></span><code>docker <span class="nb">exec</span> -it myui:v1 /bin/bash
+</code></pre></div>
+<p>Now let's connect from within the container and see if it works</p>
+<div class="highlight"><pre><span></span><code>curl localhost:8082/hello/
+</code></pre></div>
+<p>As you can see that doesn't work either.  </p>
+<blockquote>
+<p>containers need to be connected to the same network in order to communicate with each other</p>
+</blockquote>
+<p>You can inspect your container to investigate the matter by looking for the network within both containers.</p>
+<div class="highlight"><pre><span></span><code>docker inspect <span class="o">[</span>container name<span class="o">]</span>
+</code></pre></div>
+<p>As you can see our UI and Parser apps are not part of the same network.</p>
+<p><img alt="alt text" class="center" src="images/Labs/Slide48.png" style="width: 80%"/></p>
+<p>Let's create a network and instruct our containers to connect to it</p>
+<div class="highlight"><pre><span></span><code>docker network create <span class="nb">test</span>
+</code></pre></div>
+<p>let's stop our docker containers:</p>
+<div class="highlight"><pre><span></span><code>docker stop <span class="o">[</span>container id<span class="o">]</span>
+</code></pre></div>
+<p>Let's run our containers again, this time instructing them to join the new network we've just created</p>
+<div class="highlight"><pre><span></span><code>docker run -p <span class="o">[</span>PortHost:PortContainer<span class="o">]</span> <span class="o">[</span>imageName<span class="o">]</span> --net<span class="o">=</span><span class="nb">test</span>
+</code></pre></div>
+<p>Run UI application on test network:</p>
+<div class="highlight"><pre><span></span><code>docker run -p <span class="m">8081</span>:8081 myui:v1 --net<span class="o">=</span><span class="nb">test</span>
+</code></pre></div>
+<p>Run parser application on test network:</p>
+<div class="highlight"><pre><span></span><code>docker run -p <span class="m">8082</span>:8082 myapp:v1 --net<span class="o">=</span><span class="nb">test</span>
+</code></pre></div>
+<p>Let's inspect our containers again and get their IP addresses based on their new network</p>
+<div class="highlight"><pre><span></span><code>docker inspect <span class="o">[</span>container name/ID<span class="o">]</span>
+</code></pre></div>
+<p>if we try to ping our applications again, they should work fine.<br/>
+Go ahead and connect to the parser form the UI app to verify that.</p>
+<p>In the next part we will be using minikube to spin up a single node kubernetes cluster. If we build all our images on your host docker machine, it'd be quite difficult to transfer your images from your host into minikube.</p>
+<p>one solution is to use minikube's docker daemon to build your docker images.</p>
+<blockquote>
+<p>you need to set your environmental parameter to use miinkube docker. This command will let you do that:</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="nb">eval</span> <span class="k">$(</span>minikube docker-env<span class="k">)</span>
+</code></pre></div>
+<p>This step is not needed here, is intended to let you know what we will use minikube's docker.</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">¶</a></h2>
+<p><img alt="alt text" class="center" src="images/Labs/Slide55.png" style="width: 80%"/></p>
+</article>
+</div>
+</div>
+</main>
+<footer class="md-footer">
+<div class="md-footer-nav">
+<nav aria-label="Footer" class="md-footer-nav__inner md-grid">
+<a class="md-footer-nav__link md-footer-nav__link--prev" href="part1.html" rel="prev" title="Architecture">
+<div class="md-footer-nav__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</div>
+<div class="md-footer-nav__title">
+<div class="md-ellipsis">
+<span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Architecture
+              </div>
+</div>
+</a>
+<a class="md-footer-nav__link md-footer-nav__link--next" href="part3.html" rel="next" title="Kubernetes">
+<div class="md-footer-nav__title">
+<div class="md-ellipsis">
+<span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Kubernetes
+              </div>
+</div>
+<div class="md-footer-nav__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"></path></svg>
+</div>
+</a>
+</nav>
+</div>
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+          Material for MkDocs
+        </a>
+ ... <a download href="pdf/covid19-Applicationx.pdf" title="PDF">download PDF</a></div>
+</div>
+</div>
+</footer>
+</div>
+<script src="assets/javascripts/vendor.d1f5a259.min.js"></script>
+<script src="assets/javascripts/bundle.f9edbbd5.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+<script>
+        app = initialize({
+          base: ".",
+          features: [],
+          search: Object.assign({
+            worker: "assets/javascripts/worker/search.fae956e7.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+</body>
+</html>
